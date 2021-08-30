@@ -37,21 +37,31 @@ class DHT:
 
 
     def handlerGetPushMessage(self, message):
-        if self.initValue < message['key'] and message['key'] <= self.finalValue:
-            print("node_"+str(self.nodeID)+" receive message")
-            data = {}
-            data['id'] = message['id']
-            if message['type'] == 'put':
-                self.table[message['key']] = message['value']
-                data.status = 201
-            elif message['type'] == 'get':
-                value = self.table[message['key']]
-                if value:
-                    data['status'] = 200
-                    data['value'] = value
-                else:
-                    data['status'] = 404
-            self.client.publish('hash', json.dumps(data))
+        try:
+            if self.initValue < message['key'] and message['key'] <= self.finalValue:
+                print("node_"+str(self.nodeID)+" receive message")
+                data = {}
+                data['id'] = message['id']
+                if message['type'] == 'put':
+                    self.table[message['key']] = message['value']
+                    data['status'] = 201
+                elif message['type'] == 'get':
+                    value = self.table[message['key']]
+                    if value:
+                        data['status'] = 200
+                        data['value'] = value
+                    else:
+                        data['status'] = 404
+                self.client.publish('hash', json.dumps(data))
+        except:
+            try:
+                data = {}
+                data['id'] = message['id']
+                data['status'] = 500
+                self.client.publish('hash', json.dumps(data))
+            except:
+                pass
+            pass
         return
 
     def on_message(self, client, userdata, message):
