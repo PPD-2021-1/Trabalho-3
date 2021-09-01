@@ -20,7 +20,7 @@ class DHT:
                 minorId = self.nodes[len(self.nodes) - 1]
         self.initValue = minorId
         self.finalValue = self.nodeID
-        print("node_"+str(self.nodeID)+" Ant/Suc:("+str(self.initValue)+"|"+str(self.finalValue)+")")
+        print("node_" + str(self.nodeID) + " Ant/Suc:(" + str(self.initValue) + "|" + str(self.finalValue) + ")")
         return
 
     def handlerNewNodeInSys(self, nodeId):
@@ -32,7 +32,7 @@ class DHT:
     def handlerJoinMessage(self, message):
         try:
             if message['type'] == 'join':
-                print("node_"+str(self.nodeID)+" receive join")
+                print("node_" + str(self.nodeID) + " receive join")
                 self.handlerNewNodeInSys(message['id'])
             return
         except:
@@ -42,7 +42,7 @@ class DHT:
     def handlerGetPushMessage(self, message):
         try:
             if self.initValue < message['key'] and message['key'] <= self.finalValue:
-                print("node_"+str(self.nodeID)+" receive message")
+                print("node_" + str(self.nodeID) + " receive message")
                 data = {}
                 data['id'] = message['id']
                 if message['type'] == 'put':
@@ -78,7 +78,7 @@ class DHT:
         return
 
     def on_connect(self, client, userdata, flags, rc):
-        print("node_"+str(self.nodeID)+" connected")
+        print("node_" + str(self.nodeID) + " connected")
         self.client.subscribe(self.channelPrefix + 'control')
         self.client.subscribe(self.channelPrefix + 'hash')
         joinMessage = {
@@ -101,7 +101,7 @@ class DHT:
 
         total = (2**32) - 1
         self.nodeID = math.floor(random.uniform(0, total))
-        print("init node_"+ str(self.nodeID))
+        print("init node_" + str(self.nodeID))
 
         self.initValue = 0
         self.finalValue = total
