@@ -1,5 +1,5 @@
 import threading
-from DHT import DHT
+from DHT import *
 import paho.mqtt.client as mqtt 
 from random import randrange, uniform
 import time
@@ -24,11 +24,25 @@ while True:
 
     def on_message():
         #recebe todas as mensagens do topico [hash]
+        message = {}
+        data = {}
+
         #id da mensagem é o que vc envio
-        #verifica se tem status
-        # 201 pra put
-        # 200 get
-        # se for 200 pra get olha value foi o mesmo que vc enviou
+        if(message['id'] == data['id']):
+            print()
+            #verifica se tem status
+            if(data['status'] != NULL):
+                print("Tem status")
+                # 201 pra put
+                if(data['status'] == "201"):
+                    print("put()")
+                # 200 get
+                elif(data['status'] == "200"):
+                    print("get()")
+                    # se for 200 pra get olha value foi o mesmo que vc enviou
+                    if(data['value'] == 0):
+                        return
+                return
         return
 
     randNumber = uniform(100.0, 150.0)
