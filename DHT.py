@@ -6,6 +6,7 @@ from io import StringIO
 
 class DHT:
 
+    # Recuperar o id do cara anterior do anel
     def getAntecessorId(self):
         preview = -1
         for i in self.nodes:
@@ -13,6 +14,7 @@ class DHT:
                 preview = i
         return preview
 
+    # atualiza os limites que o no atend
     def updateBundaries(self):
         minorId = self.getAntecessorId()
         if minorId == -1:
