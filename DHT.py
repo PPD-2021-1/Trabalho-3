@@ -30,10 +30,13 @@ class DHT:
             self.updateBundaries()
 
     def handlerJoinMessage(self, message):
-        if message['type'] == 'join':
-            print("node_"+str(self.nodeID)+" receive join")
-            self.handlerNewNodeInSys(message['id'])
-        return
+        try:
+            if message['type'] == 'join':
+                print("node_"+str(self.nodeID)+" receive join")
+                self.handlerNewNodeInSys(message['id'])
+            return
+        except:
+            pass
 
 
     def handlerGetPushMessage(self, message):
@@ -52,13 +55,13 @@ class DHT:
                         data['value'] = value
                     else:
                         data['status'] = 404
-                self.client.publish('hash', json.dumps(data))
+                self.client.publish(self.channelPrefix + 'hash', json.dumps(data))
         except:
             try:
                 data = {}
                 data['id'] = message['id']
                 data['status'] = 500
-                self.client.publish('hash', json.dumps(data))
+                self.client.publish(self.channelPrefix + 'hash', json.dumps(data))
             except:
                 pass
             pass
@@ -67,30 +70,34 @@ class DHT:
     def on_message(self, client, userdata, message):
         #io = StringIO()
         payload = json.loads(message.payload)
-        if message.topic == "control":
+        if message.topic == self.channelPrefix + "control":
             self.handlerJoinMessage(payload)
             return
-        elif message.topic == "hash":
+        elif message.topic == self.channelPrefix + "hash":
             self.handlerGetPushMessage(payload)
         return
 
     def on_connect(self, client, userdata, flags, rc):
         print("node_"+str(self.nodeID)+" connected")
-        self.client.subscribe('control')
-        self.client.subscribe('hash')
+        self.client.subscribe(self.channelPrefix + 'control')
+        self.client.subscribe(self.channelPrefix + 'hash')
         joinMessage = {
             "type": "join",
             "id": self.nodeID
         }
-        self.client.publish('control', json.dumps(joinMessage))
+        self.client.publish(self.channelPrefix + 'control', json.dumps(joinMessage))
 
     def on_log(self, client, userdata, level, buf):
         #print(buf)
         return
 
-    def __init__(self, brokenURL):
+    def __init__(self, brokenURL, channelPrefix):
         self.nodes = []
         self.table = {}
+        if(channelPrefix and len(channelPrefix)):
+            self.channelPrefix = channelPrefix + '/'
+        else:
+            self.channelPrefix = ''
 
         total = (2**32) - 1
         self.nodeID = math.floor(random.uniform(0, total))
