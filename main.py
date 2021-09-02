@@ -10,6 +10,7 @@ def createNode():
     dht = DHT("mqtt.eclipseprojects.io", "trabalhopdd1110002203")
 
 t = False
+
 for i in range(8):
     t = threading.Thread(target=createNode)
     t.start()
@@ -22,10 +23,9 @@ client.connect(mqttBroker)
 
 while True:
 
-    def on_message():
+    def on_message(self, message, status):
         #recebe todas as mensagens do topico [hash]
         message = {}
-        data = {}
 
         #id da mensagem é o que vc envio
         if(message['id'] == data['id']):
@@ -56,4 +56,5 @@ while True:
     }
 
     client.publish("hash", json.dumps(data))
-    time.sleep(1)
+    time.sleep(2)
+    input("Teste")

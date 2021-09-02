@@ -1,2 +1,19 @@
-pip3 install paho-mqtt
+# Trabalho 1.3 - DHT
 
+#### Requisitos
+
+- Python 3
+- Mqtt 
+
+#### Execução
+
+Abra o shell na pasta raíz do trabalho e execute os seguintes comandos:
+
+```
+$ pip3 install paho-mqtt
+$ python3 main.py
+```
+
+#### Autores
+- <a href="https://github.com/Pequem" target="_blank">Bruno Guerra</a>
+- <a href="https://github.com/vitorchane" target="_blank">Vitor Chane</a>

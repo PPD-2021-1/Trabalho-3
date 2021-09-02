@@ -14,7 +14,7 @@ class DHT:
                 preview = i
         return preview
 
-    # atualiza os limites que o no atend
+    # atualiza os limites que o no atende
     def updateBundaries(self):
         minorId = self.getAntecessorId()
         if minorId == -1:
@@ -96,6 +96,7 @@ class DHT:
     def __init__(self, brokenURL, channelPrefix):
         self.nodes = []
         self.table = {}
+
         if(channelPrefix and len(channelPrefix)):
             self.channelPrefix = channelPrefix + '/'
         else:
@@ -114,5 +115,4 @@ class DHT:
         self.client.on_log = self.on_log
         self.client.enable_logger(logger=None)
         self.client.connect(brokenURL)
-
         self.client.loop_forever()
