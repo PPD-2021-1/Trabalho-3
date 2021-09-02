@@ -22,7 +22,7 @@ class DHT:
                 minorId = self.nodes[len(self.nodes) - 1]
         self.initValue = minorId
         self.finalValue = self.nodeID
-        print("node_" + str(self.nodeID) + " Ant/Suc:(" + str(self.initValue) + "|" + str(self.finalValue) + ")")
+        print("node_" + str(self.nodeID) + " NEW RANGE Ant/Suc:(" + str(self.initValue) + "|" + str(self.finalValue) + ")")
         return
 
     def handlerNewNodeInSys(self, nodeId):
@@ -40,21 +40,26 @@ class DHT:
         except:
             pass
 
+    def checkIfKeyInMyRange(self, key):
+        if self.initValue < self.finalValue:
+            return self.initValue < key and key <= self.finalValue
+        else:
+            return (self.initValue < key and key < (2**32) - 1) or (0 < key and key < self.finalValue)
 
     def handlerGetPushMessage(self, message):
         try:
-            if self.initValue < message['key'] and message['key'] <= self.finalValue:
-                print("node_" + str(self.nodeID) + " receive message")
+            if 'key' in message and self.checkIfKeyInMyRange(message['key']):
+                print("node_" + str(self.nodeID) + " (from:" + str(self.initValue) + "|to:" + str(self.finalValue) + ") receive message")
                 data = {}
                 data['id'] = message['id']
+                data['type'] = 'server_response'
                 if message['type'] == 'put':
                     self.table[message['key']] = message['value']
                     data['status'] = 201
                 elif message['type'] == 'get':
-                    value = self.table[message['key']]
-                    if value:
+                    if message['key'] in self.table:
                         data['status'] = 200
-                        data['value'] = value
+                        data['value'] = self.table[message['key']]
                     else:
                         data['status'] = 404
                 self.client.publish(self.channelPrefix + 'hash', json.dumps(data))
