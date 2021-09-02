@@ -25,13 +25,15 @@ class DHT:
         print("node_" + str(self.nodeID) + " NEW RANGE Ant/Suc:(" + str(self.initValue) + "|" + str(self.finalValue) + ")")
         return
 
+    # Trata a mensagem de sincronia
     def handlerNewNodeInSys(self, nodeId):
         if nodeId != self.nodeID:
             self.nodes.append(nodeId)
             self.nodes.sort()
             self.updateBundaries()
 
-    def handlerJoinMessage(self, message):
+    # Trata a mensagem do canal de controle
+    def handlerControlMessage(self, message):
         try:
             if message['type'] == 'join':
                 print("node_" + str(self.nodeID) + " receive join")
@@ -44,13 +46,15 @@ class DHT:
         if self.initValue < self.finalValue:
             return self.initValue < key and key <= self.finalValue
         else:
-            return (self.initValue < key and key < (2**32) - 1) or (0 < key and key < self.finalValue)
+            # Trata caso range crusa o 0
+            return (self.initValue < key and key < (2**32)) or (0 <= key and key <= self.finalValue)
 
-    def handlerGetPushMessage(self, message):
+    def handlerGetAndPutMessage(self, message):
         try:
             if 'key' in message and self.checkIfKeyInMyRange(message['key']):
                 print("node_" + str(self.nodeID) + " (from:" + str(self.initValue) + "|to:" + str(self.finalValue) + ") receive message")
                 data = {}
+                # Repete o id para o usuário que enviou saber que a mensagem é dele
                 data['id'] = message['id']
                 data['type'] = 'server_response'
                 if message['type'] == 'put':
@@ -75,19 +79,19 @@ class DHT:
         return
 
     def on_message(self, client, userdata, message):
-        #io = StringIO()
         payload = json.loads(message.payload)
         if message.topic == self.channelPrefix + "control":
-            self.handlerJoinMessage(payload)
+            self.handlerControlMessage(payload)
             return
         elif message.topic == self.channelPrefix + "hash":
-            self.handlerGetPushMessage(payload)
+            self.handlerGetAndPutMessage(payload)
         return
 
     def on_connect(self, client, userdata, flags, rc):
         print("node_" + str(self.nodeID) + " connected")
         self.client.subscribe(self.channelPrefix + 'control')
         self.client.subscribe(self.channelPrefix + 'hash')
+        # Mesagem de join anuncia a entra de um novo nó no anel, demais nó iram atualizar o seu intervalo quando receber essa mensagem
         joinMessage = {
             "type": "join",
             "id": self.nodeID
@@ -99,6 +103,7 @@ class DHT:
         return
 
     def __init__(self, brokenURL, channelPrefix):
+        # Nós do anel
         self.nodes = []
         self.table = {}
 
@@ -106,7 +111,7 @@ class DHT:
             self.channelPrefix = channelPrefix + '/'
         else:
             self.channelPrefix = ''
-
+            
         total = (2**32) - 1
         self.nodeID = math.floor(random.uniform(0, total))
         print("init node_" + str(self.nodeID))
