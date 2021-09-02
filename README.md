@@ -39,9 +39,9 @@ Requisição
 ```json
     {
         "type": "put",
-        "id": "[um id qualquer para identificar a mensagem]",
-        "key": ["chave onde será gravado]",
-        "value": "[string que deseja armazenar]"
+        "id": "[Um id qualquer para identificar a mensagem]",
+        "key": "[Chave onde será gravado]",
+        "value": "[Valor que deseja armazenar]"
     }
 ```
 
@@ -64,8 +64,8 @@ Requisição
 ```json
     {
         "type": "get",
-        "id": "[um id qualquer para identificar a mensagem]",
-        "key": ["chave onde será gravado]",
+        "id": "[Um id qualquer para identificar a mensagem]",
+        "key": "[Chave onde será lida]",
     }
 ```
 
@@ -76,11 +76,11 @@ Resposta
         "id": "[Mesmo id da mensagem de requisição]",
         "type": "server_response",
         "status": "200",
-        "value": "[Message recupera]"
+        "value": "[Valor recupera]"
     }
 ```
 
-O status 200 indica que a chave foi recuperada e o 404 que a mensagem não foi encontrada
+O status 200 indica que a valor foi recuperado e o 404 que a valor não foi encontrado.
 
 #### Autores
 - <a href="https://github.com/Pequem" target="_blank">Fernando Guerra</a>
