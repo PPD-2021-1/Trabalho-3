@@ -3,7 +3,8 @@
 ## Requisitos
 
 - Python 3
-- Mqtt 
+- Paho Mqtt para python 
+- Conexão com a internet (Usamos o broken público)
 
 ## Execução
 
