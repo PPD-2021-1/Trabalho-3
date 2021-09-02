@@ -60,7 +60,7 @@ time.sleep(2)
 
 print('CLIENT: Digite o que você deseja:')
 print('CLIENT: put:[key]:[message]')
-print('CLIENT: get:key')
+print('CLIENT: get:[key]')
 
 while True:
     try:
